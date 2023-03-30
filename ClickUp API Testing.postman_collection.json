@@ -1,0 +1,361 @@
+{
+	"info": {
+		"_postman_id": "9288b304-0091-41c2-96fb-c4bd59f22724",
+		"name": "ClickUp API Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "18258404"
+	},
+	"item": [
+		{
+			"name": "Create space",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"spaceId\",json.id)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.collectionVariables.set(\"teamId\", 24530032);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Testing Space\",\r\n  \"multiple_assignees\": true,\r\n  \"features\": {\r\n    \"due_dates\": {\r\n      \"enabled\": true,\r\n      \"start_date\": false,\r\n      \"remap_due_dates\": true,\r\n      \"remap_closed_due_date\": false\r\n    },\r\n    \"time_tracking\": {\r\n      \"enabled\": false\r\n    },\r\n    \"tags\": {\r\n      \"enabled\": true\r\n    },\r\n    \"time_estimates\": {\r\n      \"enabled\": true\r\n    },\r\n    \"checklists\": {\r\n      \"enabled\": true\r\n    },\r\n    \"custom_fields\": {\r\n      \"enabled\": true\r\n    },\r\n    \"remap_dependencies\": {\r\n      \"enabled\": true\r\n    },\r\n    \"dependency_warning\": {\r\n      \"enabled\": true\r\n    },\r\n    \"portfolios\": {\r\n      \"enabled\": true\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://api.clickup.com/api/v2/team/{{teamId}}/space"
+			},
+			"response": []
+		},
+		{
+			"name": "Create a list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"listId\", json.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Testing Tasks1\",\r\n    \"content\": \"New List Content\",\r\n    \"priority\": 1,\r\n    \"status\": \"red\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://api.clickup.com/api/v2/space/{{spaceId}}/list"
+			},
+			"response": []
+		},
+		{
+			"name": "Create task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const json = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.set(\"taskId\", json.id)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Testing task\",\r\n    \"description\":\"It is just a sample task\",\r\n    \"status\":\"\",\r\n    \"priority\": null,\r\n    \"parent\": null,\r\n    \"time_estimate\": null,\r\n    \"assigness\": null,\r\n    \"archived\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://api.clickup.com/api/v2/list/{{listId}}/task"
+			},
+			"response": []
+		},
+		{
+			"name": "Get tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonResponse = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://api.clickup.com/api/v2/list/{{listId}}/task"
+			},
+			"response": []
+		},
+		{
+			"name": "Update task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonResponse = pm.response.json();\r",
+							"\r",
+							"pm.sendRequest(\"https://postman-echo.com/get\", function (err, response) {\r",
+							"    console.log(response.json());\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Should return name - Testing task - updated\", function () {\r",
+							"    pm.expect(jsonResponse.name).to.eql('Testing task - updated');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Should return description - It is updated task\", function () {\r",
+							"    pm.expect(jsonResponse.description).to.eql('It is updated task');\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Testing task - updated\",\r\n    \"description\":\"It is updated task\",\r\n    \"status\":\"\",\r\n    \"priority\": 1,\r\n    \"parent\": null,\r\n    \"time_estimate\": null,\r\n    \"assigness\": null,\r\n    \"archived\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://api.clickup.com/api/v2/task/{{taskId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Update space",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonResponse = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Should return space name testing\", function () {\r",
+							"    pm.expect(jsonResponse.name).to.eql('Testing')\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Testing\",\r\n  \"multiple_assignees\": true,\r\n  \"features\": {\r\n    \"due_dates\": {\r\n      \"enabled\": true,\r\n      \"start_date\": false,\r\n      \"remap_due_dates\": true,\r\n      \"remap_closed_due_date\": false\r\n    },\r\n    \"time_tracking\": {\r\n      \"enabled\": true\r\n    },\r\n    \"tags\": {\r\n      \"enabled\": true\r\n    },\r\n    \"time_estimates\": {\r\n      \"enabled\": true\r\n    },\r\n    \"checklists\": {\r\n      \"enabled\": true\r\n    },\r\n    \"custom_fields\": {\r\n      \"enabled\": true\r\n    },\r\n    \"remap_dependencies\": {\r\n      \"enabled\": true\r\n    },\r\n    \"dependency_warning\": {\r\n      \"enabled\": true\r\n    },\r\n    \"portfolios\": {\r\n      \"enabled\": true\r\n    }\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "https://api.clickup.com/api/v2/space/{{spaceId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get spaces",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://api.clickup.com/api/v2/team/{{teamId}}/space"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete task",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "https://api.clickup.com/api/v2/task/{{taskId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete lists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "https://api.clickup.com/api/v2/list/{{listId}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete spaces",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.collectionVariables.clear();"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "https://api.clickup.com/api/v2/space/{{spaceId}}"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": {
+			"value": "pk_42423243_49V8NV3BQC4BSOQP3J7KRBOMOMD65EW5",
+			"key": "Authorization"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "teamId",
+			"value": ""
+		},
+		{
+			"key": "spaceId",
+			"value": ""
+		},
+		{
+			"key": "listId",
+			"value": ""
+		},
+		{
+			"key": "taskId",
+			"value": ""
+		}
+	]
+}
